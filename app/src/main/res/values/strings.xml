@@ -7,4 +7,8 @@
     <string name="record_screen_title">Record</string>
     <string name="no_records_yet">It looks like you haven\'t added any records yet.</string>
     <string name="no_payments_yet">It looks like you haven\'t added any payments yet.</string>
+    <string name="dismiss_text">Cancel</string>
+    <string name="confirm_text">Save</string>
+    <string name="person_name_text">Name</string>
+    <string name="person_name_supporting_text">Enter the name of the person you have this record with.</string>
 </resources>

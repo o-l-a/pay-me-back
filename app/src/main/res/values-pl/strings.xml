@@ -8,4 +8,9 @@
     <string name="record_screen_title">Rachunek</string>
     <string name="no_records_yet">Wygląda na to, że nie masz jeszcze żadnych rachunków.</string>
     <string name="no_payments_yet">Wygląda na to, że nie masz jeszcze żadnych płatności.</string>
+    <string name="dismiss_text">Anuluj</string>
+    <string name="confirm_text">Zapisz</string>
+    <string name="person_name_text">Nazwa</string>
+    <string name="person_name_supporting_text">Wpisz nazwę osoby, z którą prowadzisz ten rachunek.</string>
+
 </resources>

@@ -10,7 +10,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
 import com.example.paymeback.data.Record
-import com.example.paymeback.ui.navigation.ENTRY_ID
+import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.HOME_ROUTE
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.theme.spacing
@@ -53,7 +52,7 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigateToRecordEdit(ENTRY_ID) }) {
+            FloatingActionButton(onClick = { navigateToRecordEdit(DEFAULT_ENTRY_ID) }) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_new_record))
             }
         }

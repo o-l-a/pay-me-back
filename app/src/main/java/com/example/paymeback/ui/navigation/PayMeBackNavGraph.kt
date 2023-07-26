@@ -21,7 +21,7 @@ import com.example.paymeback.ui.screens.RecordEditViewModel
 const val HOME_ROUTE: String = "home"
 const val EDIT_PAYMENT_ROUTE: String = "payment_edit"
 const val RECORD_EDIT_ROUTE: String = "record_edit"
-const val ENTRY_ID: Int = -1
+const val DEFAULT_ENTRY_ID: Int = -1
 
 @Composable
 fun PayMeBackNavHost(
