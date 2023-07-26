@@ -5,4 +5,7 @@
     <string name="edit_payment_title">Edycja płatności</string>
     <string name="back_button_content_description">Powrót</string>
     <string name="add_new_record">Dodaj rachunek</string>
+    <string name="record_screen_title">Rachunek</string>
+    <string name="no_records_yet">Wygląda na to, że nie masz jeszcze żadnych rachunków.</string>
+    <string name="no_payments_yet">Wygląda na to, że nie masz jeszcze żadnych płatności.</string>
 </resources>

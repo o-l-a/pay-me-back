@@ -4,4 +4,7 @@
     <string name="edit_payment_title">Edit payment</string>
     <string name="back_button_content_description">Back</string>
     <string name="add_new_record">Add new record</string>
+    <string name="record_screen_title">Record</string>
+    <string name="no_records_yet">It looks like you haven\'t added any records yet.</string>
+    <string name="no_payments_yet">It looks like you haven\'t added any payments yet.</string>
 </resources>

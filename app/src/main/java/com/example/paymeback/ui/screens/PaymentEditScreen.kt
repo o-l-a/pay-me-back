@@ -12,7 +12,7 @@ import com.example.paymeback.R
 import com.example.paymeback.ui.navigation.EDIT_PAYMENT_ROUTE
 import com.example.paymeback.ui.navigation.NavigationDestination
 
-object EditPaymentDestination : NavigationDestination {
+object PaymentEditDestination : NavigationDestination {
     override val route: String = EDIT_PAYMENT_ROUTE
     override val titleRes: Int = R.string.edit_payment_title
     const val paymentIdArg = "paymentId"
@@ -25,7 +25,7 @@ fun EditPaymentScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
-    viewModel: EditPaymentViewModel
+    viewModel: PaymentEditViewModel
 ) {
     Scaffold(
         topBar = {

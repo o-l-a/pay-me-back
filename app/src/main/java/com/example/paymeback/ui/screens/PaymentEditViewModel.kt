@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class EditPaymentViewModel @Inject constructor(
+class PaymentEditViewModel @Inject constructor(
     private val paymentsRepository: OfflinePaymentsRepository
 ) : ViewModel() {
 }
