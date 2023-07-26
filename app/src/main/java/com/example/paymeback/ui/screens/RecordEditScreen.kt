@@ -35,6 +35,7 @@ fun RecordEditScreen(
     onNavigateUp: () -> Unit,
     viewModel: RecordEditViewModel
 ) {
+    val recordUiState = viewModel.recordUiState
     Scaffold(
         topBar = {
             PayMeBackTopAppBar(
