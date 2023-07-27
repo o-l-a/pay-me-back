@@ -3,6 +3,8 @@ package com.example.paymeback.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
@@ -14,11 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import com.example.paymeback.DeleteAlertDialog
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
 import com.example.paymeback.data.Payment
-import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.navigation.RECORD_EDIT_ROUTE
 import kotlinx.coroutines.launch
@@ -46,7 +49,9 @@ fun RecordEditScreen(
             PayMeBackTopAppBar(
                 title = stringResource(RecordEditDestination.titleRes),
                 navigateUp = onNavigateUp,
-                canNavigateBack = true
+                canNavigateBack = true,
+                hasAction = true,
+                onDelete = { viewModel.updateUiState(recordUiState.copy(deleteDialogVisible = true)) }
             )
         }
     ) { innerPadding ->
@@ -73,38 +78,35 @@ fun RecordEditScreen(
                         } else {
                             viewModel.updateRecord()
                         }
-                        viewModel.updateUiState(recordUiState.copy(
-                            actionEnabled = false,
-                            isFirstTimeEntry = false
-                        ))
+                        viewModel.updateUiState(
+                            recordUiState.copy(
+                                actionEnabled = false,
+                                isFirstTimeEntry = false
+                            )
+                        )
+                    }
+                }
+            )
+        }
+        if (recordUiState.deleteDialogVisible) {
+            DeleteAlertDialog(
+                onDismiss = {
+                    viewModel.updateUiState(
+                        recordUiState.copy(
+                            deleteDialogVisible = false
+                        )
+                    )
+                },
+                onConfirm = {
+                    coroutineScope.launch {
+                        viewModel.deleteRecord()
+                        navigateBack()
                     }
                 }
             )
         }
     }
 }
-//if (record.actionEnabled) {
-//    Button(onClick = { /*TODO*/ }) {
-//        Text(text = stringResource(R.string.add_new_record))
-//    }
-//} else {
-//    LazyColumn {
-//        item {
-//            Text("add new")
-//        }
-//        items(record.myPayments) { payment ->
-//            PaymentCard(payment = payment, onCardClick = onCardClick)
-//        }
-//    }
-//    LazyColumn {
-//        item {
-//            Text("add new")
-//        }
-//        items(record.personsPayments) { payment ->
-//            PaymentCard(payment = payment, onCardClick = onCardClick)
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,6 +149,7 @@ fun EditRecordPopUp(
     onValueChange: (RecordUiState) -> Unit = {}
 ) {
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = onDismiss,
         text = {
             TextField(
@@ -157,7 +160,11 @@ fun EditRecordPopUp(
                 },
                 supportingText = {
                     Text(stringResource(R.string.person_name_supporting_text))
-                }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = { onConfirm() }
+                )
             )
         },
         confirmButton = {

@@ -1,15 +1,20 @@
 package com.example.paymeback.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +32,8 @@ import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.HOME_ROUTE
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.theme.spacing
+import java.text.NumberFormat
+import java.util.Locale
 
 object HomeDestination : NavigationDestination {
     override val route: String = HOME_ROUTE
@@ -79,12 +86,15 @@ fun HomeBody(
             text = stringResource(R.string.no_records_yet)
         )
     } else {
+        val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+        val symbol = numberFormat.currency?.symbol
         LazyColumn(
             modifier = modifier.fillMaxSize()
         ) {
             items(recordList) { record ->
                 RecordCard(
                     record = record,
+                    currencySymbol = symbol,
                     onCardClick = onCardClick
                 )
             }
@@ -92,13 +102,45 @@ fun HomeBody(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordCard(
     modifier: Modifier = Modifier,
+    currencySymbol: String?,
     record: Record,
     onCardClick: (Int) -> Unit
 ) {
-    Card() {
-        Text("hej")
+
+    ElevatedCard(
+        modifier = modifier
+            .padding(
+                start = MaterialTheme.spacing.medium,
+                end = MaterialTheme.spacing.medium,
+                top = MaterialTheme.spacing.small,
+                bottom = MaterialTheme.spacing.small
+            )
+            .fillMaxWidth()
+            .clickable(
+                onClick = { onCardClick(record.id) }
+            )
+    ) {
+        ListItem(
+            leadingContent = {
+                Text(
+                    text = record.balance.toString().plus(" ").plus(currencySymbol),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            headlineText = {
+                Text(
+                    text = record.person
+                )
+            },
+            trailingContent = {
+                IconButton(onClick = { onCardClick(record.id) }) {
+                    Icon(Icons.Filled.ChevronRight, contentDescription = null)
+                }
+            }
+        )
     }
 }

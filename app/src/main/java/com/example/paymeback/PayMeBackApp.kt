@@ -2,10 +2,14 @@ package com.example.paymeback
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -27,6 +31,8 @@ fun PayMeBackTopAppBar(
     title: String,
     navigateUp: () -> Unit = {},
     canNavigateBack: Boolean,
+    hasAction: Boolean = false,
+    onDelete: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     TopAppBar(
@@ -45,5 +51,38 @@ fun PayMeBackTopAppBar(
             }
         },
         scrollBehavior = scrollBehavior,
+        actions = {
+            if (hasAction) {
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_text))
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun DeleteAlertDialog(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
+    onConfirm: () -> Unit = {},
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        text = {
+            Text(
+                stringResource(R.string.delete_message)
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.delete_text))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.dismiss_text))
+            }
+        }
     )
 }

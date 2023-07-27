@@ -2,7 +2,6 @@ package com.example.paymeback.data
 
 import android.content.Context
 import androidx.room.Room
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +16,7 @@ class RecordDatabaseModule {
     fun provideRecordDao(recordDatabase: RecordDatabase): RecordDao {
         return recordDatabase.recordDao()
     }
+
     @Provides
     fun providePaymentDao(recordDatabase: RecordDatabase): PaymentDao {
         return recordDatabase.paymentDao()
@@ -29,6 +29,7 @@ class RecordDatabaseModule {
             appContext,
             RecordDatabase::class.java,
             "PayMeBackDatabase"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 }

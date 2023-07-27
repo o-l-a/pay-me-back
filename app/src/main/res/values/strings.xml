@@ -11,4 +11,6 @@
     <string name="confirm_text">Save</string>
     <string name="person_name_text">Name</string>
     <string name="person_name_supporting_text">Enter the name of the person you have this record with.</string>
+    <string name="delete_text">Delete</string>
+    <string name="delete_message">Are you sure you want to delete this item? This action cannot be undone.</string>
 </resources>

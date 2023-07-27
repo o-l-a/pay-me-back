@@ -8,4 +8,6 @@ data class Record(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val person: String,
+    val balance: Float
 )
+

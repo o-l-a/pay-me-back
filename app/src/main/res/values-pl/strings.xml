@@ -12,5 +12,7 @@
     <string name="confirm_text">Zapisz</string>
     <string name="person_name_text">Nazwa</string>
     <string name="person_name_supporting_text">Wpisz nazwę osoby, z którą prowadzisz ten rachunek.</string>
+    <string name="delete_text">Usuń</string>
+    <string name="delete_message">Czy na pewno chcesz usunąć tę pozycję? Tej akcji nie można cofnąć.</string>
 
 </resources>

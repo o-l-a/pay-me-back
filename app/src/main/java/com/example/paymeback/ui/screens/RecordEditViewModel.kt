@@ -39,7 +39,9 @@ class RecordEditViewModel @Inject constructor(
     }
 
     fun updateUiState(newRecordUiState: RecordUiState) {
-        recordUiState = newRecordUiState.copy()
+        recordUiState = newRecordUiState.copy(
+            balance = recordUiState.myPayments.map { it.amount }.sum() - recordUiState.personsPayments.map { it.amount }.sum()
+        )
     }
 
     suspend fun updateRecord() {
@@ -53,13 +55,19 @@ class RecordEditViewModel @Inject constructor(
             recordsRepository.insertRecord(recordUiState.toRecordWithPayments().record)
         }
     }
+
+    suspend fun deleteRecord() {
+        recordsRepository.deleteRecord(recordUiState.toRecordWithPayments().record)
+    }
 }
 
 data class RecordUiState(
     val id: Int = 0,
     val actionEnabled: Boolean = false,
     val isFirstTimeEntry: Boolean = false,
+    val deleteDialogVisible: Boolean = false,
     val person: String = "",
+    val balance: Float = 0f,
     val myPayments: List<Payment> = listOf(),
     val personsPayments: List<Payment> = listOf(),
 )
@@ -70,19 +78,22 @@ fun RecordUiState.isValid(): Boolean {
 
 fun RecordWithPayments.toRecordUiState(
     actionEnabled: Boolean = false,
-    isFirstTimeEntry: Boolean = false
+    isFirstTimeEntry: Boolean = false,
+    deleteDialogVisible: Boolean = false
 ): RecordUiState =
     RecordUiState(
         id = record.id,
         actionEnabled = actionEnabled,
         isFirstTimeEntry = isFirstTimeEntry,
+        deleteDialogVisible = deleteDialogVisible,
         person = record.person,
+        balance = record.balance,
         myPayments = myPayments,
         personsPayments = personsPayments
     )
 
 fun RecordUiState.toRecordWithPayments(): RecordWithPayments = RecordWithPayments(
-    record = Record(id!!, person),
+    record = Record(id, person, balance),
     myPayments = myPayments,
     personsPayments = personsPayments
 )
