@@ -1,15 +1,19 @@
 package com.example.paymeback
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -31,8 +35,10 @@ fun PayMeBackTopAppBar(
     title: String,
     navigateUp: () -> Unit = {},
     canNavigateBack: Boolean,
-    hasAction: Boolean = false,
+    hasEditAction: Boolean = false,
+    hasDeleteAction: Boolean = false,
     onDelete: () -> Unit = {},
+    onEdit: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     TopAppBar(
@@ -52,7 +58,12 @@ fun PayMeBackTopAppBar(
         },
         scrollBehavior = scrollBehavior,
         actions = {
-            if (hasAction) {
+            if (hasEditAction) {
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.edit_text))
+                }
+            }
+            if (hasDeleteAction) {
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_text))
                 }
@@ -62,12 +73,40 @@ fun PayMeBackTopAppBar(
 }
 
 @Composable
+fun PayMeBackBottomSaveBar(
+    modifier: Modifier = Modifier,
+    isFormValid: Boolean = false,
+    onCancelClicked: () -> Unit,
+    onSaveClicked: () -> Unit
+) {
+    BottomAppBar(
+        modifier = modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = modifier.fillMaxWidth()
+        ) {
+            TextButton(onClick = onCancelClicked) {
+                Text(stringResource(R.string.dismiss_text))
+            }
+            TextButton(
+                onClick = onSaveClicked,
+                enabled = isFormValid
+            ) {
+                Text(stringResource(R.string.confirm_text))
+            }
+        }
+    }
+}
+
+@Composable
 fun DeleteAlertDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
     onConfirm: () -> Unit = {},
 ) {
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = onDismiss,
         text = {
             Text(

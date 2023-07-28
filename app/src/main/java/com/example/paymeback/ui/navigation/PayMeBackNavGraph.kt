@@ -53,14 +53,21 @@ fun PayMeBackNavHost(
                 viewModel = recordEditViewModel,
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() },
-                navigateToPaymentEdit = { navController.navigate("${PaymentEditDestination.route}/$it") }
+                navigateToPaymentEdit = { recordId, paymentId ->
+                    navController.navigate("${PaymentEditDestination.route}/${recordId}/${paymentId}")
+                }
             )
         }
         composable(
             route = PaymentEditDestination.routeWithArgs,
-            arguments = listOf(navArgument(PaymentEditDestination.paymentIdArg) {
-                type = NavType.IntType
-            })
+            arguments = listOf(
+                navArgument(PaymentEditDestination.recordIdArg) {
+                    type = NavType.LongType
+                },
+                navArgument(PaymentEditDestination.paymentIdArg) {
+                    type = NavType.LongType
+                },
+            )
         ) {
             val paymentEditViewModel = hiltViewModel<PaymentEditViewModel>()
             EditPaymentScreen(

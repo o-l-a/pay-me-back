@@ -17,7 +17,7 @@ interface RecordDao {
     fun getRecord(id: Int): Flow<Record>
 
     @Query("SELECT * from record WHERE id = :id")
-    fun getRecordWithPayments(id: Int): Flow<RecordWithPayments>
+    fun getRecordWithPayments(id: Long): Flow<RecordWithPayments>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Record): Long

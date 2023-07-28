@@ -7,9 +7,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -24,6 +29,7 @@ import com.example.paymeback.DeleteAlertDialog
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
 import com.example.paymeback.data.Payment
+import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.navigation.RECORD_EDIT_ROUTE
 import kotlinx.coroutines.launch
@@ -32,7 +38,7 @@ object RecordEditDestination : NavigationDestination {
     override val route: String = RECORD_EDIT_ROUTE
     override val titleRes: Int = R.string.record_screen_title
     const val recordIdArg = "recordId"
-    val routeWithArgs = "${RecordEditDestination.route}/{$recordIdArg}"
+    val routeWithArgs = "$route/{$recordIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +46,7 @@ object RecordEditDestination : NavigationDestination {
 fun RecordEditScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    navigateToPaymentEdit: (Int) -> Unit,
+    navigateToPaymentEdit: (Long, Long) -> Unit,
     onNavigateUp: () -> Unit,
     viewModel: RecordEditViewModel
 ) {
@@ -52,9 +58,19 @@ fun RecordEditScreen(
                 title = recordUiState.person,
                 navigateUp = onNavigateUp,
                 canNavigateBack = true,
-                hasAction = true,
-                onDelete = { viewModel.updateUiState(recordUiState.copy(deleteDialogVisible = true)) }
+                hasDeleteAction = true,
+                onDelete = { viewModel.updateUiState(recordUiState.copy(deleteDialogVisible = true)) },
+                hasEditAction = true,
+                onEdit = { viewModel.updateUiState(recordUiState.copy(actionEnabled = true)) }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { navigateToPaymentEdit(recordUiState.id, DEFAULT_ENTRY_ID) }) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.add_new_payment)
+                )
+            }
         }
     ) { innerPadding ->
         if (!recordUiState.isFirstTimeEntry) {
@@ -66,8 +82,8 @@ fun RecordEditScreen(
                         text = recordUiState.id.toString()
                     )
                 }
-                items (recordUiState.payments) { payment ->
-                    PaymentCard(payment = payment, onCardClick = {})
+                items(recordUiState.payments) { payment ->
+                    PaymentCard(payment = payment, onCardClick = navigateToPaymentEdit)
                 }
             }
         }
@@ -112,25 +128,24 @@ fun RecordEditScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentCard(
     modifier: Modifier = Modifier,
     payment: Payment,
-    onCardClick: (Int) -> Unit,
+    onCardClick: (Long, Long) -> Unit,
 ) {
     ListItem(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = { onCardClick(payment.id) }),
-        headlineText = {
+            .clickable(onClick = { onCardClick(payment.recordId, payment.id) }),
+        headlineContent = {
             Text(
                 text = payment.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
-        supportingText = {
+        supportingContent = {
             Text(
                 text = payment.date.toString(),
             )
@@ -143,7 +158,6 @@ fun PaymentCard(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditRecordPopUp(
     modifier: Modifier = Modifier,
@@ -162,13 +176,11 @@ fun EditRecordPopUp(
                 label = {
                     Text(stringResource(R.string.person_name_text))
                 },
-                supportingText = {
-                    Text(stringResource(R.string.person_name_supporting_text))
-                },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(
                     onDone = { onConfirm() }
-                )
+                ),
+                textStyle = MaterialTheme.typography.bodyLarge
             )
         },
         confirmButton = {

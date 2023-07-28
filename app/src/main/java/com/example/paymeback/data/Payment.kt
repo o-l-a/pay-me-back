@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import java.time.LocalDateTime
+import java.util.Date
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -20,11 +20,11 @@ import java.time.LocalDateTime
 @TypeConverters(Converters::class)
 data class Payment(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     @ColumnInfo(name = "record_id")
-    val recordId: Int,
+    val recordId: Long,
     val isMyPayment: Boolean,
-    val date: LocalDateTime,
+    val date: Date,
     val title: String,
     val amount: Float
 )

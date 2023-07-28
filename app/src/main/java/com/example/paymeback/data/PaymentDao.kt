@@ -14,10 +14,10 @@ interface PaymentDao {
     fun getAllPayments(): Flow<List<Payment>>
 
     @Query("SELECT * from payment WHERE id = :id")
-    fun getPayment(id: Int): Flow<Payment>
+    fun getPayment(id: Long): Flow<Payment>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(item: Payment)
+    suspend fun insert(item: Payment): Long
 
     @Update
     suspend fun update(item: Payment)

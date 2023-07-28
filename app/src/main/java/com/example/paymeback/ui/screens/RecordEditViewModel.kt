@@ -11,6 +11,7 @@ import com.example.paymeback.data.OfflineRecordsRepository
 import com.example.paymeback.data.Payment
 import com.example.paymeback.data.Record
 import com.example.paymeback.data.RecordWithPayments
+import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,11 +28,11 @@ class RecordEditViewModel @Inject constructor(
 ) : ViewModel() {
     var recordUiState by mutableStateOf(RecordUiState())
 
-    private val recordId: Int = checkNotNull(savedStateHandle[RecordEditDestination.recordIdArg])
+    private val recordId: Long = checkNotNull(savedStateHandle[RecordEditDestination.recordIdArg])
 
     init {
         viewModelScope.launch {
-            recordUiState = if (recordId != -1) {
+            recordUiState = if (recordId != DEFAULT_ENTRY_ID) {
                 recordsRepository.getRecordWithPaymentsStream(recordId)
                     .filterNotNull()
                     .first()
@@ -86,7 +87,7 @@ data class RecordUiState(
     val isFirstTimeEntry: Boolean = false,
     val deleteDialogVisible: Boolean = false,
     val person: String = "",
-    val balance: Float = 0f,
+    val balance: Float = 0F,
     val payments: List<Payment> = listOf(),
 )
 

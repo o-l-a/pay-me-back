@@ -8,9 +8,9 @@ class OfflinePaymentsRepository @Inject constructor(
 ) : PaymentsRepository {
     override fun getAllPaymentsStream(): Flow<List<Payment>> = paymentDao.getAllPayments()
 
-    override fun getPaymentStream(id: Int): Flow<Payment?> = paymentDao.getPayment(id)
+    override fun getPaymentStream(id: Long): Flow<Payment?> = paymentDao.getPayment(id)
 
-    override suspend fun insertPayment(payment: Payment) = paymentDao.insert(payment)
+    override suspend fun insertPayment(payment: Payment): Long = paymentDao.insert(payment)
 
     override suspend fun deletePayment(payment: Payment) = paymentDao.delete(payment)
 

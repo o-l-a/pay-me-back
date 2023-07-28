@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">PayMeBack</string>
     <string name="home_screen_title">Strona główna</string>
-    <string name="edit_payment_title">Edycja płatności</string>
     <string name="back_button_content_description">Powrót</string>
     <string name="add_new_record">Dodaj rachunek</string>
     <string name="record_screen_title">Rachunek</string>
@@ -10,9 +9,14 @@
     <string name="no_payments_yet">Wygląda na to, że nie masz jeszcze żadnych płatności.</string>
     <string name="dismiss_text">Anuluj</string>
     <string name="confirm_text">Zapisz</string>
-    <string name="person_name_text">Nazwa</string>
-    <string name="person_name_supporting_text">Wpisz nazwę osoby, z którą prowadzisz ten rachunek.</string>
+    <string name="person_name_text">Nazwa osoby</string>
     <string name="delete_text">Usuń</string>
     <string name="delete_message">Czy na pewno chcesz usunąć tę pozycję? Tej akcji nie można cofnąć.</string>
-
+    <string name="add_new_payment">Dodaj płatność</string>
+    <string name="payment_screen_title">Płatność</string>
+    <string name="edit_text">Edytuj</string>
+    <string name="payment_title_text">Tytuł</string>
+    <string name="payment_amount_text">Kwota</string>
+    <string name="payment_date_text">Data</string>
+    <string name="ok_text">OK</string>
 </resources>

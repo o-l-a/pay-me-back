@@ -131,7 +131,7 @@ fun RecordCard(
                     style = MaterialTheme.typography.titleLarge
                 )
             },
-            headlineText = {
+            headlineContent = {
                 Text(
                     text = record.person
                 )
