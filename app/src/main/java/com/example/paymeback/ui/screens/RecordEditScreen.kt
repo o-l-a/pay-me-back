@@ -3,6 +3,8 @@ package com.example.paymeback.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -47,7 +49,7 @@ fun RecordEditScreen(
     Scaffold(
         topBar = {
             PayMeBackTopAppBar(
-                title = stringResource(RecordEditDestination.titleRes),
+                title = recordUiState.person,
                 navigateUp = onNavigateUp,
                 canNavigateBack = true,
                 hasAction = true,
@@ -56,10 +58,18 @@ fun RecordEditScreen(
         }
     ) { innerPadding ->
         if (!recordUiState.isFirstTimeEntry) {
-            Text(
-                text = recordUiState.person,
+            LazyColumn(
                 modifier = modifier.padding(innerPadding)
-            )
+            ) {
+                item {
+                    Text(
+                        text = recordUiState.id.toString()
+                    )
+                }
+                items (recordUiState.payments) { payment ->
+                    PaymentCard(payment = payment, onCardClick = {})
+                }
+            }
         }
         if (recordUiState.actionEnabled) {
             EditRecordPopUp(
@@ -78,12 +88,6 @@ fun RecordEditScreen(
                         } else {
                             viewModel.updateRecord()
                         }
-                        viewModel.updateUiState(
-                            recordUiState.copy(
-                                actionEnabled = false,
-                                isFirstTimeEntry = false
-                            )
-                        )
                     }
                 }
             )

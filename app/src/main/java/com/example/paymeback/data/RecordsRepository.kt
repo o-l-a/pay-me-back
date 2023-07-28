@@ -9,7 +9,7 @@ interface RecordsRepository {
 
     fun getRecordWithPaymentsStream(id: Int): Flow<RecordWithPayments?>
 
-    suspend fun insertRecord(record: Record)
+    suspend fun insertRecord(record: Record): Long
 
     suspend fun deleteRecord(record: Record)
 

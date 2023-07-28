@@ -44,7 +44,7 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navigateToRecordEdit: (Int) -> Unit,
+    navigateToRecordEdit: (Long) -> Unit,
     viewModel: HomeViewModel
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -76,7 +76,7 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier = Modifier,
     recordList: List<Record>,
-    onCardClick: (Int) -> Unit
+    onCardClick: (Long) -> Unit
 ) {
     if (recordList.isEmpty()) {
         Text(
@@ -108,7 +108,7 @@ fun RecordCard(
     modifier: Modifier = Modifier,
     currencySymbol: String?,
     record: Record,
-    onCardClick: (Int) -> Unit
+    onCardClick: (Long) -> Unit
 ) {
 
     ElevatedCard(

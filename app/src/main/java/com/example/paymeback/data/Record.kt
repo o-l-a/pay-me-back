@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Record(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val person: String,
     val balance: Float
 )

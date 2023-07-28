@@ -13,7 +13,7 @@ class OfflineRecordsRepository @Inject constructor(
     override fun getRecordWithPaymentsStream(id: Int): Flow<RecordWithPayments?> =
         recordDao.getRecordWithPayments(id)
 
-    override suspend fun insertRecord(record: Record) = recordDao.insert(record)
+    override suspend fun insertRecord(record: Record): Long = recordDao.insert(record)
 
     override suspend fun deleteRecord(record: Record) = recordDao.delete(record)
 

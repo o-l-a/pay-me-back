@@ -23,6 +23,7 @@ data class Payment(
     val id: Int = 0,
     @ColumnInfo(name = "record_id")
     val recordId: Int,
+    val isMyPayment: Boolean,
     val date: LocalDateTime,
     val title: String,
     val amount: Float

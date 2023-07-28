@@ -9,10 +9,5 @@ data class RecordWithPayments(
         parentColumn = "id",
         entityColumn = "record_id"
     )
-    val myPayments: List<Payment>,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "record_id"
-    )
-    val personsPayments: List<Payment>
+    val payments: List<Payment>
 )
