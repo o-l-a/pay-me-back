@@ -34,7 +34,6 @@ import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.theme.spacing
 import java.text.NumberFormat
 import java.util.Locale
-import com.example.paymeback.ui.screens.decimalFormat
 
 object HomeDestination : NavigationDestination {
     override val route: String = HOME_ROUTE

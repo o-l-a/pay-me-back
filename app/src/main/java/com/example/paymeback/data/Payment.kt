@@ -23,6 +23,7 @@ data class Payment(
     val id: Long = 0,
     @ColumnInfo(name = "record_id")
     val recordId: Long,
+    @ColumnInfo(name = "is_my_payment")
     val isMyPayment: Boolean,
     val date: Date,
     val title: String,
