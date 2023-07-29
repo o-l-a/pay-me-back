@@ -10,4 +10,3 @@ data class Record(
     val person: String,
     val balance: Float
 )
-

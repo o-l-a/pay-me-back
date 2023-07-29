@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paymeback.data.OfflinePaymentsRepository
+import com.example.paymeback.data.OfflineRecordsRepository
 import com.example.paymeback.data.Payment
 import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PaymentEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val paymentsRepository: OfflinePaymentsRepository
+    private val paymentsRepository: OfflinePaymentsRepository,
+    private val recordsRepository: OfflineRecordsRepository
 ) : ViewModel() {
     var paymentUiState by mutableStateOf(PaymentUiState())
 

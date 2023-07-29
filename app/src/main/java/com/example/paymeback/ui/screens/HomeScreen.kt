@@ -34,6 +34,7 @@ import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.theme.spacing
 import java.text.NumberFormat
 import java.util.Locale
+import com.example.paymeback.ui.screens.decimalFormat
 
 object HomeDestination : NavigationDestination {
     override val route: String = HOME_ROUTE
@@ -102,7 +103,6 @@ fun HomeBody(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecordCard(
     modifier: Modifier = Modifier,
@@ -127,7 +127,7 @@ fun RecordCard(
         ListItem(
             leadingContent = {
                 Text(
-                    text = record.balance.toString().plus(" ").plus(currencySymbol),
+                    text = decimalFormat.format(record.balance).plus(" ").plus(currencySymbol),
                     style = MaterialTheme.typography.titleLarge
                 )
             },

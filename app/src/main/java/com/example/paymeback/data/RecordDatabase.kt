@@ -1,17 +1,17 @@
 package com.example.paymeback.data
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [Record::class, Payment::class], version = 4, exportSchema = false)
+@Database(entities = [Record::class, Payment::class], version = 8, exportSchema = false)
 abstract class RecordDatabase : RoomDatabase() {
     abstract fun recordDao(): RecordDao
     abstract fun paymentDao(): PaymentDao
+
 //    companion object {
-//        @Volatile
+        //        @Volatile
 //        private var Instance: RecordDatabase? = null
 //
 //        fun getDatabase(context: Context): RecordDatabase {
@@ -22,5 +22,4 @@ abstract class RecordDatabase : RoomDatabase() {
 //                    .also { Instance = it }
 //            }
 //        }
-//    }
 }

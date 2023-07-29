@@ -1,6 +1,5 @@
 package com.example.paymeback.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,12 +12,10 @@ import com.example.paymeback.data.Record
 import com.example.paymeback.data.RecordWithPayments
 import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,10 +41,7 @@ class RecordEditViewModel @Inject constructor(
     }
 
     fun updateUiState(newRecordUiState: RecordUiState) {
-        recordUiState = newRecordUiState.copy(
-            balance = recordUiState.payments.filter { it.isMyPayment }.map { it.amount }.sum()
-                    - recordUiState.payments.filter { !it.isMyPayment }.map { it.amount }.sum()
-        )
+        recordUiState = newRecordUiState.copy()
     }
 
     suspend fun updateRecord() {
@@ -67,7 +61,6 @@ class RecordEditViewModel @Inject constructor(
             val newRecordId = viewModelScope.async {
                 recordsRepository.insertRecord(recordUiState.toRecordWithPayments().record)
             }
-            Log.d("INSERT RECORD", newRecordId.await().toString())
             updateUiState(recordUiState.copy(
                 id = newRecordId.await(),
                 actionEnabled = false,
