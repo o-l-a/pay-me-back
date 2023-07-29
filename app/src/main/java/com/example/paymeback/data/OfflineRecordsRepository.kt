@@ -8,7 +8,7 @@ class OfflineRecordsRepository @Inject constructor(
 ) : RecordsRepository {
     override fun getAllRecordsStream(): Flow<List<Record>> = recordDao.getAllRecords()
 
-    override fun getRecordStream(id: Int): Flow<Record?> = recordDao.getRecord(id)
+    override fun getRecordStream(id: Long): Flow<Record?> = recordDao.getRecord(id)
 
     override fun getRecordWithPaymentsStream(id: Long): Flow<RecordWithPayments?> =
         recordDao.getRecordWithPayments(id)

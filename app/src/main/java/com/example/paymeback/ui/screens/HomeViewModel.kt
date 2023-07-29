@@ -13,8 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-
-    private val recordsRepository: OfflineRecordsRepository
+    recordsRepository: OfflineRecordsRepository
 ) : ViewModel() {
 
     companion object {

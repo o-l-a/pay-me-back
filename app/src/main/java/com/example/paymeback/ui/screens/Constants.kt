@@ -7,4 +7,4 @@ import java.text.SimpleDateFormat
 @SuppressLint("SimpleDateFormat")
 val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
 
-val decimalFormat = DecimalFormat("#.##")
+val decimalFormat = DecimalFormat("0.00")

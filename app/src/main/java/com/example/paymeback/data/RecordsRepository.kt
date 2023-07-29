@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface RecordsRepository {
     fun getAllRecordsStream(): Flow<List<Record>>
 
-    fun getRecordStream(id: Int): Flow<Record?>
+    fun getRecordStream(id: Long): Flow<Record?>
 
     fun getRecordWithPaymentsStream(id: Long): Flow<RecordWithPayments?>
 

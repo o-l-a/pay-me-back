@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,7 +34,10 @@ import com.example.paymeback.data.Payment
 import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.navigation.RECORD_EDIT_ROUTE
+import com.example.paymeback.ui.theme.spacing
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 object RecordEditDestination : NavigationDestination {
     override val route: String = RECORD_EDIT_ROUTE
@@ -50,22 +55,29 @@ fun RecordEditScreen(
     onNavigateUp: () -> Unit,
     viewModel: RecordEditViewModel
 ) {
-    val recordUiState = viewModel.recordUiState
+    val recordUiState = viewModel.recordUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+    val symbol = numberFormat.currency?.symbol
     Scaffold(
         topBar = {
             PayMeBackTopAppBar(
-                title = recordUiState.person,
+                title = recordUiState.value.person,
                 navigateUp = onNavigateUp,
                 canNavigateBack = true,
                 hasDeleteAction = true,
-                onDelete = { viewModel.updateUiState(recordUiState.copy(deleteDialogVisible = true)) },
+                onDelete = { viewModel.updateUiState(recordUiState.value.copy(deleteDialogVisible = true)) },
                 hasEditAction = true,
-                onEdit = { viewModel.updateUiState(recordUiState.copy(actionEnabled = true)) }
+                onEdit = { viewModel.updateUiState(recordUiState.value.copy(actionEnabled = true)) }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigateToPaymentEdit(recordUiState.id, DEFAULT_ENTRY_ID) }) {
+            FloatingActionButton(onClick = {
+                navigateToPaymentEdit(
+                    recordUiState.value.id,
+                    DEFAULT_ENTRY_ID
+                )
+            }) {
                 Icon(
                     Icons.Filled.Add,
                     contentDescription = stringResource(R.string.add_new_payment)
@@ -73,33 +85,45 @@ fun RecordEditScreen(
             }
         }
     ) { innerPadding ->
-        if (!recordUiState.isFirstTimeEntry) {
+        Text(
+            modifier = modifier.padding(
+                MaterialTheme.spacing.medium
+            ),
+            text = "Mamy " + recordUiState.value.payments.size.toString()
+        )
+        if (recordUiState.value.payments.isEmpty()) {
+            Text(
+                modifier = modifier.padding(
+                    MaterialTheme.spacing.medium
+                ),
+                text = stringResource(R.string.no_payments_yet)
+            )
+        } else {
             LazyColumn(
                 modifier = modifier.padding(innerPadding)
             ) {
-                item {
-                    Text(
-                        text = recordUiState.id.toString()
+                items(recordUiState.value.payments) { payment ->
+                    PaymentCard(
+                        payment = payment,
+                        onCardClick = navigateToPaymentEdit,
+                        currencySymbol = symbol
                     )
-                }
-                items(recordUiState.payments) { payment ->
-                    PaymentCard(payment = payment, onCardClick = navigateToPaymentEdit)
                 }
             }
         }
-        if (recordUiState.actionEnabled) {
+        if (recordUiState.value.actionEnabled) {
             EditRecordPopUp(
-                recordUiState = recordUiState,
+                recordUiState = recordUiState.value,
                 onValueChange = viewModel::updateUiState,
                 onDismiss = {
-                    viewModel.updateUiState(recordUiState.copy(actionEnabled = false))
-                    if (recordUiState.isFirstTimeEntry) {
+                    viewModel.updateUiState(recordUiState.value.copy(actionEnabled = false))
+                    if (recordUiState.value.isFirstTimeEntry) {
                         navigateBack()
                     }
                 },
                 onConfirm = {
                     coroutineScope.launch {
-                        if (recordUiState.isFirstTimeEntry) {
+                        if (recordUiState.value.isFirstTimeEntry) {
                             viewModel.saveRecord()
                         } else {
                             viewModel.updateRecord()
@@ -108,11 +132,11 @@ fun RecordEditScreen(
                 }
             )
         }
-        if (recordUiState.deleteDialogVisible) {
+        if (recordUiState.value.deleteDialogVisible) {
             DeleteAlertDialog(
                 onDismiss = {
                     viewModel.updateUiState(
-                        recordUiState.copy(
+                        recordUiState.value.copy(
                             deleteDialogVisible = false
                         )
                     )
@@ -132,30 +156,46 @@ fun RecordEditScreen(
 fun PaymentCard(
     modifier: Modifier = Modifier,
     payment: Payment,
+    currencySymbol: String?,
     onCardClick: (Long, Long) -> Unit,
 ) {
-    ListItem(
+    ElevatedCard(
         modifier = modifier
+            .padding(
+                start = MaterialTheme.spacing.medium,
+                end = MaterialTheme.spacing.medium,
+                top = MaterialTheme.spacing.small,
+                bottom = MaterialTheme.spacing.small
+            )
             .fillMaxWidth()
-            .clickable(onClick = { onCardClick(payment.recordId, payment.id) }),
-        headlineContent = {
-            Text(
-                text = payment.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+            .clickable(
+                onClick = { onCardClick(payment.recordId, payment.id) }
             )
-        },
-        supportingContent = {
-            Text(
-                text = payment.date.toString(),
-            )
-        },
-        leadingContent = {
-            Text(
-                text = payment.amount.toString()
-            )
-        }
-    )
+    ) {
+        ListItem(
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable(onClick = { onCardClick(payment.recordId, payment.id) }),
+            headlineContent = {
+                Text(
+                    text = payment.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = dateFormatter.format(payment.date)
+                )
+            },
+            trailingContent = {
+                Text(
+                    text = decimalFormat.format(payment.amount).plus(" ").plus(currencySymbol),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        )
+    }
 }
 
 @Composable

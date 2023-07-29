@@ -14,7 +14,7 @@ interface RecordDao {
     fun getAllRecords(): Flow<List<Record>>
 
     @Query("SELECT * from record WHERE id = :id")
-    fun getRecord(id: Int): Flow<Record>
+    fun getRecord(id: Long): Flow<Record>
 
     @Query("SELECT * from record WHERE id = :id")
     fun getRecordWithPayments(id: Long): Flow<RecordWithPayments>

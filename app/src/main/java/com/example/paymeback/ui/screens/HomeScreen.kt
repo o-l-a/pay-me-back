@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.filled.TrendingFlat
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -109,7 +110,6 @@ fun RecordCard(
     record: Record,
     onCardClick: (Long) -> Unit
 ) {
-
     ElevatedCard(
         modifier = modifier
             .padding(
@@ -124,10 +124,15 @@ fun RecordCard(
             )
     ) {
         ListItem(
-            leadingContent = {
+            modifier = Modifier
+                .padding(
+                    top = MaterialTheme.spacing.small,
+                    bottom = MaterialTheme.spacing.small
+                ),
+            trailingContent = {
                 Text(
                     text = decimalFormat.format(record.balance).plus(" ").plus(currencySymbol),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleMedium
                 )
             },
             headlineContent = {
@@ -135,10 +140,15 @@ fun RecordCard(
                     text = record.person
                 )
             },
-            trailingContent = {
-                IconButton(onClick = { onCardClick(record.id) }) {
-                    Icon(Icons.Filled.ChevronRight, contentDescription = null)
-                }
+            leadingContent = {
+                Icon(
+                    imageVector = when {
+                        record.balance > 0 -> Icons.Filled.TrendingUp
+                        record.balance < 0 -> Icons.Filled.TrendingDown
+                        else -> Icons.Filled.TrendingFlat
+                    },
+                    contentDescription = null
+                )
             }
         )
     }
