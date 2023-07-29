@@ -1,7 +1,14 @@
 package com.example.paymeback.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,24 +16,28 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.example.paymeback.DeleteAlertDialog
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
@@ -85,72 +96,84 @@ fun RecordEditScreen(
             }
         }
     ) { innerPadding ->
-        if (recordUiState.value.payments.isEmpty()) {
-            Text(
-                modifier = modifier.padding(
-                    MaterialTheme.spacing.medium
-                ),
-                text = stringResource(R.string.no_payments_yet)
-            )
-        } else {
-            LazyColumn(
-                modifier = modifier.padding(innerPadding)
-            ) {
-                item {
-                    Text(
-                        modifier = modifier.padding(
-                            MaterialTheme.spacing.medium
-                        ),
-                        text = "Mamy " + recordUiState.value.payments.size.toString()
+        LazyColumn(
+            modifier = modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(bottom = MaterialTheme.spacing.extraLarge)
+        ) {
+            item {
+                Box(Modifier.padding(16.dp)) {
+                    val accountsProportion: List<Float> = recordUiState.value.getProportions()
+                    val circleColors = listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primaryContainer
                     )
-                }
-                items(recordUiState.value.payments) { payment ->
-                    PaymentCard(
-                        payment = payment,
-                        onCardClick = navigateToPaymentEdit,
-                        currencySymbol = symbol
+                    AnimatedCircle(
+                        accountsProportion,
+                        circleColors,
+                        Modifier
+                            .height(200.dp)
+                            .align(Alignment.Center)
+                            .fillMaxWidth()
                     )
+                    Column(modifier = Modifier.align(Alignment.Center)) {
+                        Text(
+                            text = decimalFormat.format(recordUiState.value.balance).plus(" ")
+                                .plus(symbol),
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
                 }
             }
+            items(recordUiState.value.payments) { payment ->
+                PaymentCard(
+                    payment = payment,
+                    onCardClick = navigateToPaymentEdit,
+                    currencySymbol = symbol
+                )
+            }
         }
-        if (recordUiState.value.actionEnabled) {
-            EditRecordPopUp(
-                recordUiState = recordUiState.value,
-                onValueChange = viewModel::updateUiState,
-                onDismiss = {
-                    viewModel.updateUiState(recordUiState.value.copy(actionEnabled = false))
+    }
+    if (recordUiState.value.actionEnabled) {
+        EditRecordPopUp(
+            recordUiState = recordUiState.value,
+            onValueChange = viewModel::updateUiState,
+            onDismiss = {
+                viewModel.updateUiState(recordUiState.value.copy(actionEnabled = false))
+                if (recordUiState.value.isFirstTimeEntry) {
+                    navigateBack()
+                }
+            },
+            onConfirm = {
+                coroutineScope.launch {
                     if (recordUiState.value.isFirstTimeEntry) {
-                        navigateBack()
-                    }
-                },
-                onConfirm = {
-                    coroutineScope.launch {
-                        if (recordUiState.value.isFirstTimeEntry) {
-                            viewModel.saveRecord()
-                        } else {
-                            viewModel.updateRecord()
-                        }
+                        viewModel.saveRecord()
+                    } else {
+                        viewModel.updateRecord()
                     }
                 }
-            )
-        }
-        if (recordUiState.value.deleteDialogVisible) {
-            DeleteAlertDialog(
-                onDismiss = {
-                    viewModel.updateUiState(
-                        recordUiState.value.copy(
-                            deleteDialogVisible = false
-                        )
+            }
+        )
+    }
+    if (recordUiState.value.deleteDialogVisible) {
+        DeleteAlertDialog(
+            onDismiss = {
+                viewModel.updateUiState(
+                    recordUiState.value.copy(
+                        deleteDialogVisible = false
                     )
-                },
-                onConfirm = {
-                    coroutineScope.launch {
-                        viewModel.deleteRecord()
-                        navigateBack()
-                    }
+                )
+            },
+            onConfirm = {
+                coroutineScope.launch {
+                    viewModel.deleteRecord()
+                    navigateBack()
                 }
-            )
-        }
+            }
+        )
     }
 }
 
@@ -161,42 +184,60 @@ fun PaymentCard(
     currencySymbol: String?,
     onCardClick: (Long, Long) -> Unit,
 ) {
-    ElevatedCard(
-        modifier = modifier
-            .padding(
-                start = MaterialTheme.spacing.medium,
-                end = MaterialTheme.spacing.medium,
-                top = MaterialTheme.spacing.small,
-                bottom = MaterialTheme.spacing.small
+    Row(modifier = modifier.fillMaxWidth()) {
+        if (payment.isMyPayment) {
+            Spacer(
+                modifier = Modifier.weight(1f)
             )
-            .fillMaxWidth()
-            .clickable(
-                onClick = { onCardClick(payment.recordId, payment.id) }
-            )
-    ) {
-        ListItem(
-            modifier = modifier
+        }
+        ElevatedCard(
+            modifier = Modifier
+                .padding(
+                    start = MaterialTheme.spacing.medium,
+                    end = MaterialTheme.spacing.medium,
+                    top = MaterialTheme.spacing.small,
+                    bottom = MaterialTheme.spacing.small
+                )
                 .fillMaxWidth()
-                .clickable(onClick = { onCardClick(payment.recordId, payment.id) }),
-            headlineContent = {
-                Text(
-                    text = payment.title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                .clickable(
+                    onClick = { onCardClick(payment.recordId, payment.id) }
                 )
-            },
-            supportingContent = {
-                Text(
-                    text = dateFormatter.format(payment.date)
-                )
-            },
-            trailingContent = {
-                Text(
-                    text = decimalFormat.format(payment.amount).plus(" ").plus(currencySymbol),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-        )
+                .weight(8f)
+        ) {
+            ListItem(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { onCardClick(payment.recordId, payment.id) }),
+                headlineContent = {
+                    Text(
+                        text = payment.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        text = dateFormatter.format(payment.date)
+                    )
+                },
+                trailingContent = {
+                    Text(
+                        text = decimalFormat.format(payment.amount).plus(" ").plus(currencySymbol),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                colors = if (payment.isMyPayment) {
+                    ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                } else {
+                    ListItemDefaults.colors()
+                }
+            )
+        }
+        if (!payment.isMyPayment) {
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -212,7 +253,7 @@ fun EditRecordPopUp(
         modifier = modifier,
         onDismissRequest = onDismiss,
         text = {
-            TextField(
+            OutlinedTextField(
                 value = recordUiState.person,
                 onValueChange = { onValueChange(recordUiState.copy(person = it)) },
                 label = {

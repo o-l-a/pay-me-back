@@ -26,8 +26,10 @@ class PaymentEditViewModel @Inject constructor(
 ) : ViewModel() {
     var paymentUiState by mutableStateOf(PaymentUiState())
 
-    private val paymentId: Long = checkNotNull(savedStateHandle[PaymentEditDestination.paymentIdArg])
+    private val paymentId: Long =
+        checkNotNull(savedStateHandle[PaymentEditDestination.paymentIdArg])
     private val recordId: Long = checkNotNull(savedStateHandle[PaymentEditDestination.recordIdArg])
+
     init {
         viewModelScope.launch {
             paymentUiState = if (paymentId != DEFAULT_ENTRY_ID) {
@@ -83,10 +85,11 @@ class PaymentEditViewModel @Inject constructor(
 data class PaymentUiState(
     val id: Long = 0,
     val recordId: Long = 0,
-    val isMyPayment: Boolean = false,
+    val isMyPayment: Boolean = true,
     val date: Date = Date(),
     val title: String = "",
     val amount: String = "",
+    val person: String = "",
     val deleteDialogVisible: Boolean = false,
     val datePickerDialogVisible: Boolean = false,
     val isFormValid: Boolean = false,
@@ -94,6 +97,7 @@ data class PaymentUiState(
 )
 
 fun Payment.toPaymentUiState(
+    person: String = "",
     deleteDialogVisible: Boolean = false,
     datePickerDialogVisible: Boolean = false,
     isFormValid: Boolean = false,
@@ -105,6 +109,7 @@ fun Payment.toPaymentUiState(
     date = date,
     title = title,
     amount = amount.toString(),
+    person = person,
     deleteDialogVisible = deleteDialogVisible,
     datePickerDialogVisible = datePickerDialogVisible,
     isFormValid = isFormValid,

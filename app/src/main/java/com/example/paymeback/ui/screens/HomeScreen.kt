@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingFlat
 import androidx.compose.material.icons.filled.TrendingUp
@@ -145,7 +146,7 @@ fun RecordCard(
                     imageVector = when {
                         record.balance > 0 -> Icons.Filled.TrendingUp
                         record.balance < 0 -> Icons.Filled.TrendingDown
-                        else -> Icons.Filled.TrendingFlat
+                        else -> Icons.Filled.Done
                     },
                     contentDescription = null
                 )

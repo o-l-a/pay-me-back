@@ -3,20 +3,27 @@ package com.example.paymeback.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -87,21 +94,89 @@ fun EditPaymentScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            TextField(
-                modifier = Modifier.padding(MaterialTheme.spacing.small),
+            MultiChoiceSegmentedButtonRow(
+                modifier = Modifier
+                    .padding(
+                        start = MaterialTheme.spacing.medium,
+                        end = MaterialTheme.spacing.medium,
+                        top = MaterialTheme.spacing.small,
+                        bottom = MaterialTheme.spacing.small
+                    )
+                    .fillMaxWidth()
+            ) {
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.shape(position = 0, count = 2),
+                    icon = {
+                        SegmentedButtonDefaults.SegmentedButtonIcon(active = paymentUiState.isMyPayment) {
+                            Icon(
+                                imageVector = Icons.Filled.TrendingUp,
+                                contentDescription = null,
+                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                            )
+                        }
+                    },
+                    onCheckedChange = {
+                        viewModel.updateUiState(paymentUiState.copy(isMyPayment = true))
+                    },
+                    checked = paymentUiState.isMyPayment
+                ) {
+                    Text(stringResource(R.string.you_text))
+                }
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.shape(position = 1, count = 2),
+                    icon = {
+                        SegmentedButtonDefaults.SegmentedButtonIcon(active = !paymentUiState.isMyPayment) {
+                            Icon(
+                                imageVector = Icons.Filled.TrendingDown,
+                                contentDescription = null,
+                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                            )
+                        }
+                    },
+                    onCheckedChange = {
+                        viewModel.updateUiState(paymentUiState.copy(isMyPayment = false))
+                    },
+                    checked = !paymentUiState.isMyPayment
+                ) {
+                    Text(paymentUiState.person)
+                }
+            }
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(
+                        start = MaterialTheme.spacing.medium,
+                        end = MaterialTheme.spacing.medium,
+                        top = MaterialTheme.spacing.small,
+                        bottom = MaterialTheme.spacing.small
+                    )
+                    .fillMaxWidth(),
                 value = paymentUiState.title,
                 onValueChange = { viewModel.updateUiState(paymentUiState.copy(title = it)) },
                 label = { Text(stringResource(R.string.payment_title_text)) }
             )
-            TextField(
-                modifier = Modifier.padding(MaterialTheme.spacing.small),
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(
+                        start = MaterialTheme.spacing.medium,
+                        end = MaterialTheme.spacing.medium,
+                        top = MaterialTheme.spacing.small,
+                        bottom = MaterialTheme.spacing.small
+                    )
+                    .fillMaxWidth(),
                 value = paymentUiState.amount,
                 onValueChange = { viewModel.updateUiState(paymentUiState.copy(amount = it)) },
                 label = { Text(stringResource(R.string.payment_amount_text)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             )
-            TextField(
-                modifier = Modifier.padding(MaterialTheme.spacing.small),
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(
+                        start = MaterialTheme.spacing.medium,
+                        end = MaterialTheme.spacing.medium,
+                        top = MaterialTheme.spacing.small,
+                        bottom = MaterialTheme.spacing.small
+                    )
+                    .fillMaxWidth(),
                 value = dateFormatter.format(paymentUiState.date),
                 readOnly = true,
                 onValueChange = { },
@@ -119,57 +194,55 @@ fun EditPaymentScreen(
                     }
                 }
             )
-            if (paymentUiState.datePickerDialogVisible) {
-                DatePickerDialog(
-                    onDismissRequest = {
-                        viewModel.updateUiState(paymentUiState.copy(datePickerDialogVisible = false))
-                    },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.updateUiState(
-                                    paymentUiState.copy(
-                                        date = Date(datePickerState.selectedDateMillis!!),
-                                        datePickerDialogVisible = false
-                                    )
-                                )
-                            },
-                        ) {
-                            Text(stringResource(R.string.ok_text))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            onClick = {
-                                viewModel.updateUiState(paymentUiState.copy(datePickerDialogVisible = false))
-                            }
-                        ) {
-                            Text(stringResource(R.string.dismiss_text))
-                        }
-                    }
-                ) {
-                    DatePicker(state = datePickerState)
-                }
-
-            }
-
         }
-        if (paymentUiState.deleteDialogVisible) {
-            DeleteAlertDialog(
-                onDismiss = {
-                    viewModel.updateUiState(
-                        paymentUiState.copy(
-                            deleteDialogVisible = false
-                        )
-                    )
+        if (paymentUiState.datePickerDialogVisible) {
+            DatePickerDialog(
+                onDismissRequest = {
+                    viewModel.updateUiState(paymentUiState.copy(datePickerDialogVisible = false))
                 },
-                onConfirm = {
-                    coroutineScope.launch {
-                        viewModel.deletePayment()
-                        navigateBack()
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.updateUiState(
+                                paymentUiState.copy(
+                                    date = Date(datePickerState.selectedDateMillis!!),
+                                    datePickerDialogVisible = false
+                                )
+                            )
+                        },
+                    ) {
+                        Text(stringResource(R.string.ok_text))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            viewModel.updateUiState(paymentUiState.copy(datePickerDialogVisible = false))
+                        }
+                    ) {
+                        Text(stringResource(R.string.dismiss_text))
                     }
                 }
-            )
+            ) {
+                DatePicker(state = datePickerState)
+            }
         }
+    }
+    if (paymentUiState.deleteDialogVisible) {
+        DeleteAlertDialog(
+            onDismiss = {
+                viewModel.updateUiState(
+                    paymentUiState.copy(
+                        deleteDialogVisible = false
+                    )
+                )
+            },
+            onConfirm = {
+                coroutineScope.launch {
+                    viewModel.deletePayment()
+                    navigateBack()
+                }
+            }
+        )
     }
 }

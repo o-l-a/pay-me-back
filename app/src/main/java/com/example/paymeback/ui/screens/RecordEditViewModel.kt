@@ -1,6 +1,5 @@
 package com.example.paymeback.ui.screens
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -102,6 +101,13 @@ data class RecordUiState(
 
 fun RecordUiState.isValid(): Boolean {
     return person.isNotEmpty()
+}
+
+fun RecordUiState.getProportions(): List<Float> {
+    val myPaymentsSum = this.payments.filter { it.isMyPayment }.map { it.amount }.sum()
+    val personsPaymentsSum = this.payments.filter { !it.isMyPayment }.map { it.amount }.sum()
+    val combinedSum = myPaymentsSum + personsPaymentsSum
+    return listOf(myPaymentsSum / combinedSum, personsPaymentsSum / combinedSum)
 }
 
 fun RecordWithPayments.toRecordUiState(

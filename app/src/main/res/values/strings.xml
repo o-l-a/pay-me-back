@@ -18,4 +18,9 @@
     <string name="payment_amount_text">Amount</string>
     <string name="payment_date_text">Date</string>
     <string name="ok_text">OK</string>
+    <string name="you_owe_them_text">You owe %s.</string>
+    <string name="they_owe_you_text">You are owed %s.</string>
+    <string name="no_debt_text">All debts settled. The balance is %s.</string>
+    <string name="who_paid_text">Who paid?</string>
+    <string name="you_text">You</string>
 </resources>
