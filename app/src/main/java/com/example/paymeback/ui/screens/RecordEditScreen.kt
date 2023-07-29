@@ -85,12 +85,6 @@ fun RecordEditScreen(
             }
         }
     ) { innerPadding ->
-        Text(
-            modifier = modifier.padding(
-                MaterialTheme.spacing.medium
-            ),
-            text = "Mamy " + recordUiState.value.payments.size.toString()
-        )
         if (recordUiState.value.payments.isEmpty()) {
             Text(
                 modifier = modifier.padding(
@@ -102,6 +96,14 @@ fun RecordEditScreen(
             LazyColumn(
                 modifier = modifier.padding(innerPadding)
             ) {
+                item {
+                    Text(
+                        modifier = modifier.padding(
+                            MaterialTheme.spacing.medium
+                        ),
+                        text = "Mamy " + recordUiState.value.payments.size.toString()
+                    )
+                }
                 items(recordUiState.value.payments) { payment ->
                     PaymentCard(
                         payment = payment,

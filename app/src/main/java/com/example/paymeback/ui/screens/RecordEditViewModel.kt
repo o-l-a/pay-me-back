@@ -1,5 +1,6 @@
 package com.example.paymeback.ui.screens
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,11 +12,9 @@ import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,33 +32,24 @@ class RecordEditViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             recordsRepository.getRecordWithPaymentsStream(recordId)
-                .map { it?.toRecordUiState() ?: RecordUiState(actionEnabled = true, isFirstTimeEntry = true) }
+                .map {
+                    if (recordId != DEFAULT_ENTRY_ID) {
+                        it?.toRecordUiState() ?: RecordUiState(
+                            actionEnabled = true,
+                            isFirstTimeEntry = true
+                        )
+                    } else {
+                        RecordUiState(
+                            actionEnabled = true,
+                            isFirstTimeEntry = true
+                        )
+                    }
+                }
                 .collect { newRecordUiState ->
                     _recordUiState.value = newRecordUiState
                 }
         }
     }
-
-//    val recordUiState: StateFlow<RecordUiState> =
-//        recordsRepository.getRecordWithPaymentsStream(recordId).map { it?.toRecordUiState() ?: RecordUiState(actionEnabled = true, isFirstTimeEntry = true) }
-//            .stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//                initialValue = RecordUiState(actionEnabled = true, isFirstTimeEntry = true)
-//            )
-//
-////    init {
-////        viewModelScope.launch {
-////            recordUiState = if (recordId != DEFAULT_ENTRY_ID) {
-////                recordsRepository.getRecordWithPaymentsStream(recordId)
-////                    .filterNotNull()
-////                    .first()
-////                    .toRecordUiState()
-////            } else {
-////                RecordUiState()
-////            }
-////        }
-////    }
 
     fun updateUiState(newRecordUiState: RecordUiState) {
         _recordUiState.update { newRecordUiState.copy() }
@@ -82,11 +72,16 @@ class RecordEditViewModel @Inject constructor(
             val newRecordId = viewModelScope.async {
                 recordsRepository.insertRecord(recordUiState.value.toRecordWithPayments().record)
             }
-            updateUiState(recordUiState.value.copy(
-                id = newRecordId.await(),
-                actionEnabled = false,
-                isFirstTimeEntry = false
-            ))
+            viewModelScope.launch {
+                recordsRepository.getRecordWithPaymentsStream(newRecordId.await())
+                    .map {
+                        it?.toRecordUiState() ?: RecordUiState()
+                    }
+                    .collect { newRecordUiState ->
+                        _recordUiState.value = newRecordUiState
+                    }
+            }
+
         }
     }
 
@@ -96,7 +91,7 @@ class RecordEditViewModel @Inject constructor(
 }
 
 data class RecordUiState(
-    val id: Long = DEFAULT_ENTRY_ID,
+    val id: Long = 0,
     val actionEnabled: Boolean = false,
     val isFirstTimeEntry: Boolean = false,
     val deleteDialogVisible: Boolean = false,
