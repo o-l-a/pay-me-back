@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecordDao {
-    @Query("SELECT * from record ORDER BY id DESC")
+    @Query("SELECT * from record ORDER BY modified_at DESC")
     fun getAllRecords(): Flow<List<Record>>
 
     @Query("SELECT * from record WHERE id = :id")

@@ -3,6 +3,7 @@ package com.example.paymeback.data
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
@@ -25,6 +26,14 @@ class RecordDatabaseModule {
     }
 
     companion object {
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    ALTER TABLE Record ADD COLUMN modified_at INTEGER NOT NULL DEFAULT 0
+                """.trimIndent())
+            }
+        }
+
         private val DB_CALLBACK = object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
@@ -38,7 +47,8 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = NEW.record_id
-                        )
+                        ),
+                        modified_at = CURRENT_TIMESTAMP
                         WHERE id = NEW.record_id;
                     END;
                     """.trimIndent()
@@ -53,7 +63,8 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = NEW.record_id
-                        )
+                        ),
+                        modified_at = CURRENT_TIMESTAMP
                         WHERE id = NEW.record_id;
                     END;
                     """.trimIndent()
@@ -68,7 +79,8 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = OLD.record_id
-                        )
+                        ),
+                        modified_at = CURRENT_TIMESTAMP
                         WHERE id = OLD.record_id;
                     END;
                     """.trimIndent()
@@ -84,7 +96,8 @@ class RecordDatabaseModule {
             appContext,
             RecordDatabase::class.java,
             "PayMeBackDatabase"
-        ).fallbackToDestructiveMigration()
+        ).addMigrations(MIGRATION_9_10)
+            .fallbackToDestructiveMigration()
             .addCallback(DB_CALLBACK)
             .build()
     }

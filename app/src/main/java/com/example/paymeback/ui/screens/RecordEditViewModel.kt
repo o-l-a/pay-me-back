@@ -96,6 +96,7 @@ data class RecordUiState(
     val deleteDialogVisible: Boolean = false,
     val person: String = "",
     val balance: Float = 0F,
+    val modifiedAt: Long = 0,
     val payments: List<Payment> = listOf(),
 )
 
@@ -122,10 +123,11 @@ fun RecordWithPayments.toRecordUiState(
         deleteDialogVisible = deleteDialogVisible,
         person = record.person,
         balance = record.balance,
+        modifiedAt = record.modifiedAt,
         payments = payments
     )
 
 fun RecordUiState.toRecordWithPayments(): RecordWithPayments = RecordWithPayments(
-    record = Record(id, person, balance),
+    record = Record(id, person, balance, System.currentTimeMillis()),
     payments = payments
 )

@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -104,31 +103,33 @@ fun RecordEditScreen(
             contentPadding = PaddingValues(bottom = MaterialTheme.spacing.extraLarge)
         ) {
             item {
-                Box(Modifier.padding(16.dp)) {
-                    val accountsProportion: List<Float> = recordUiState.value.getProportions()
-                    val circleColors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primaryContainer
-                    )
-                    AnimatedCircle(
-                        accountsProportion,
-                        circleColors,
-                        Modifier
-                            .height(200.dp)
-                            .align(Alignment.Center)
-                            .fillMaxWidth()
-                    )
-                    Column(modifier = Modifier.align(Alignment.Center)) {
-                        Text(
-                            text = decimalFormat.format(recordUiState.value.balance).plus(" ")
-                                .plus(symbol),
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                if (!recordUiState.value.isFirstTimeEntry) {
+                    Box(Modifier.padding(16.dp)) {
+                        val accountsProportion: List<Float> = recordUiState.value.getProportions()
+                        val circleColors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.primaryContainer
                         )
+                        AnimatedCircle(
+                            accountsProportion,
+                            circleColors,
+                            Modifier
+                                .height(150.dp)
+                                .align(Alignment.Center)
+                                .fillMaxWidth()
+                        )
+                        Column(modifier = Modifier.align(Alignment.Center)) {
+                            Text(
+                                text = decimalFormat.format(recordUiState.value.balance).plus(" ")
+                                    .plus(symbol),
+                                style = MaterialTheme.typography.headlineMedium,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                        }
                     }
                 }
             }
-            items(recordUiState.value.payments) { payment ->
+            items(recordUiState.value.payments.sortedByDescending { it.date }) { payment ->
                 PaymentCard(
                     payment = payment,
                     onCardClick = navigateToPaymentEdit,

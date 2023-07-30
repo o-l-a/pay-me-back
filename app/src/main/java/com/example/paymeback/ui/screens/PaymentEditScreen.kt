@@ -120,7 +120,7 @@ fun EditPaymentScreen(
                     },
                     checked = paymentUiState.isMyPayment
                 ) {
-                    Text(stringResource(R.string.you_text))
+                    Text(stringResource(R.string.i_paid_text))
                 }
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.shape(position = 1, count = 2),
@@ -138,7 +138,7 @@ fun EditPaymentScreen(
                     },
                     checked = !paymentUiState.isMyPayment
                 ) {
-                    Text(paymentUiState.person)
+                    Text(stringResource(R.string.they_paid_text))
                 }
             }
             OutlinedTextField(

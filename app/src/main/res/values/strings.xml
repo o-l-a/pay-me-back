@@ -22,5 +22,6 @@
     <string name="they_owe_you_text">You are owed %s.</string>
     <string name="no_debt_text">All debts settled. The balance is %s.</string>
     <string name="who_paid_text">Who paid?</string>
-    <string name="you_text">You</string>
+    <string name="i_paid_text">I paid</string>
+    <string name="they_paid_text">They paid</string>
 </resources>

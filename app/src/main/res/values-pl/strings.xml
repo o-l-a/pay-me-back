@@ -23,5 +23,6 @@
     <string name="they_owe_you_text">Należy ci się %s.</string>
     <string name="no_debt_text">Wszystkie długi uregulowane. Saldo wynosi %s.</string>
     <string name="who_paid_text">Kto zapłacił?</string>
-    <string name="you_text">Ty</string>
+    <string name="i_paid_text">Ja płacę</string>
+    <string name="they_paid_text">Oni płacą</string>
 </resources>
