@@ -47,8 +47,7 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = NEW.record_id
-                        ),
-                        modified_at = CURRENT_TIMESTAMP
+                        )
                         WHERE id = NEW.record_id;
                     END;
                     """.trimIndent()
@@ -63,8 +62,7 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = NEW.record_id
-                        ),
-                        modified_at = CURRENT_TIMESTAMP
+                        )
                         WHERE id = NEW.record_id;
                     END;
                     """.trimIndent()
@@ -79,8 +77,7 @@ class RecordDatabaseModule {
                             SELECT COALESCE(SUM(CASE WHEN is_my_payment = 1 THEN amount ELSE -amount END), 0)
                             FROM Payment
                             WHERE record_id = OLD.record_id
-                        ),
-                        modified_at = CURRENT_TIMESTAMP
+                        )
                         WHERE id = OLD.record_id;
                     END;
                     """.trimIndent()

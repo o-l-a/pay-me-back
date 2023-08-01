@@ -1,21 +1,30 @@
 package com.example.paymeback.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingFlat
 import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,9 +33,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
 import com.example.paymeback.data.Record
@@ -34,6 +49,7 @@ import com.example.paymeback.ui.navigation.DEFAULT_ENTRY_ID
 import com.example.paymeback.ui.navigation.HOME_ROUTE
 import com.example.paymeback.ui.navigation.NavigationDestination
 import com.example.paymeback.ui.theme.spacing
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -51,6 +67,7 @@ fun HomeScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val homeUiState by viewModel.homeUiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -69,7 +86,13 @@ fun HomeScreen(
         HomeBody(
             modifier = modifier.padding(innerPadding),
             recordList = homeUiState.recordList,
-            onCardClick = navigateToRecordEdit
+            sortedBy = viewModel.sortedBy.collectAsState(initial = 0).value,
+            onCardClick = navigateToRecordEdit,
+            onSortClick = { sortBy ->
+                coroutineScope.launch {
+                    viewModel.changeSorting(sortBy)
+                }
+            }
         )
     }
 }
@@ -78,7 +101,9 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier = Modifier,
     recordList: List<Record>,
-    onCardClick: (Long) -> Unit
+    sortedBy: Int,
+    onCardClick: (Long) -> Unit,
+    onSortClick: (Int) -> Unit
 ) {
     if (recordList.isEmpty()) {
         Text(
@@ -90,10 +115,78 @@ fun HomeBody(
     } else {
         val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
         val symbol = numberFormat.currency?.symbol
+        var expanded by remember { mutableStateOf(false) }
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = MaterialTheme.spacing.extraLarge)
         ) {
-            items(recordList) { record ->
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(
+                                Icons.Default.Sort,
+                                contentDescription = stringResource(R.string.sort_text)
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.clickable(onClick = { expanded = true }),
+                            text = stringResource(SortOption.values()[sortedBy].label).plus(" "),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Icon(
+                            modifier = Modifier
+                                .clickable(onClick = { expanded = true })
+                                .size(MaterialTheme.typography.labelLarge.fontSize.value.dp),
+                            imageVector = SortOption.values()[sortedBy].icon,
+                            contentDescription = null
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        for (sortOption in SortOption.values()) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(sortOption.label),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                },
+                                onClick = {
+                                    onSortClick(sortOption.value)
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        sortOption.icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(MaterialTheme.typography.labelLarge.fontSize.value.dp)
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            items(when (sortedBy) {
+                SortOption.LAST_MODIFIED_DESCENDING.value -> recordList.sortedByDescending { it.modifiedAt }
+                SortOption.LAST_MODIFIED_ASCENDING.value -> recordList.sortedBy { it.modifiedAt }
+                SortOption.BALANCE_DESCENDING.value -> recordList.sortedByDescending { it.balance }
+                SortOption.BALANCE_ASCENDING.value -> recordList.sortedBy { it.balance }
+                SortOption.NAME_DESCENDING.value -> recordList.sortedByDescending { it.person.lowercase() }
+                SortOption.NAME_ASCENDING.value -> recordList.sortedBy { it.person.lowercase() }
+                else -> recordList
+            }) { record ->
                 RecordCard(
                     record = record,
                     currencySymbol = symbol,
@@ -125,11 +218,6 @@ fun RecordCard(
             )
     ) {
         ListItem(
-            modifier = Modifier
-                .padding(
-                    top = MaterialTheme.spacing.small,
-                    bottom = MaterialTheme.spacing.small
-                ),
             trailingContent = {
                 Text(
                     text = decimalFormat.format(record.balance).plus(" ").plus(currencySymbol),
@@ -139,6 +227,14 @@ fun RecordCard(
             headlineContent = {
                 Text(
                     text = record.person
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = stringResource(R.string.last_modified_text).plus(": ").plus(
+                        dateFormatter.format(record.modifiedAt)
+                    ),
+                    style = MaterialTheme.typography.labelMedium
                 )
             },
             leadingContent = {

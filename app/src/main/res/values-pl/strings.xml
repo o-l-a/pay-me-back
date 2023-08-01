@@ -25,4 +25,7 @@
     <string name="who_paid_text">Kto zapłacił?</string>
     <string name="i_paid_text">Ja płacę</string>
     <string name="they_paid_text">Oni płacą</string>
+    <string name="sort_text">Sortuj</string>
+    <string name="balance_text">Dług</string>
+    <string name="last_modified_text">Ostatnio zmodyfikowane</string>
 </resources>

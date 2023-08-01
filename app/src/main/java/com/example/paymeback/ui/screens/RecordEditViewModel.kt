@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -96,7 +97,7 @@ data class RecordUiState(
     val deleteDialogVisible: Boolean = false,
     val person: String = "",
     val balance: Float = 0F,
-    val modifiedAt: Long = 0,
+    val modifiedAt: Date = Date(),
     val payments: List<Payment> = listOf(),
 )
 
@@ -128,6 +129,6 @@ fun RecordWithPayments.toRecordUiState(
     )
 
 fun RecordUiState.toRecordWithPayments(): RecordWithPayments = RecordWithPayments(
-    record = Record(id, person, balance, System.currentTimeMillis()),
+    record = Record(id, person, balance, Date(System.currentTimeMillis())),
     payments = payments
 )
