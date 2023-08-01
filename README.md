@@ -14,17 +14,18 @@ PayMeBack is an Android app built in Kotlin that helps you track your expenses w
 
 - User-friendly and intuitive UI powered by Jetpack Compose.
 - Dependency injection handled by Hilt for clean and modular code.
-- Local data storage using Room database for efficient management of records. Utilization of relations, triggers and migrations.
+- Local data storage using Room database for efficient management of records. Utilization of relations, triggers and migrations. 
 - Keep track of expenses with multiple people and manage individual records.
+- Sort your records using parameters stored in DataStore.
 - Add payments to records with details of payer, title, amount, and date.
 - Real-time balance calculation for each person to track outstanding debts easily.
 
 ## Screenshots
 
-| Home Screen                                | Record                                       | Payment                                           |
-|--------------------------------------------|----------------------------------------------|---------------------------------------------------|
-| ![Home Screen](screenshots/home.jpg)       | ![Add Record](screenshots/edit_record.jpg)   | ![Record Details](screenshots/edit_payment.jpg)   |                                   |
-| ![Home Screen](screenshots/home_empty.jpg) | ![Add Record](screenshots/add_person_2.jpg)  | ![Record Details](screenshots/delete_payment.jpg) |
+| Home Screen                               | Record                                       | Payment                                           |
+|-------------------------------------------|----------------------------------------------|---------------------------------------------------|
+| ![Home Screen](screenshots/home.jpg)      | ![Add Record](screenshots/edit_record.jpg)   | ![Record Details](screenshots/edit_payment.jpg)   |                                   |
+| ![Home Screen](screenshots/home_sort.jpg) | ![Add Record](screenshots/add_person_2.jpg)  | ![Record Details](screenshots/delete_payment.jpg) |
 ## Usage
 
 1. Launch the PayMeBack app on your Android device or emulator.
@@ -34,9 +35,11 @@ PayMeBack is an Android app built in Kotlin that helps you track your expenses w
 5. In the record details screen, you can add payments by clicking the floating action button.
 6. Enter the title, amount, and date of the payment, and select the person who made the payment.
 7. The app will automatically update the balance between you and the selected person based on the new payment.
+8. In the Home screen you can sort records by person's name, modification time or balance, descending or ascending.
 
 ## Libraries Used
 
 - Jetpack Compose: Modern Android UI toolkit for building native UIs.
 - Hilt: Dependency injection library for Android.
 - Room: SQLite database library for offline data storage.
+- DataStore: Android Jetpack library for asynchronous key-value pairs data storage.

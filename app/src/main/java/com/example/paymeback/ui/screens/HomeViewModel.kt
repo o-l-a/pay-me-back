@@ -1,8 +1,14 @@
 package com.example.paymeback.ui.screens
 
 import android.util.Log
+import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paymeback.R
 import com.example.paymeback.data.OfflineRecordsRepository
 import com.example.paymeback.data.Record
 import com.example.paymeback.data.UserPreferencesRepository
@@ -14,13 +20,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class SortOption(val value: Int) {
-    LAST_MODIFIED_DESCENDING(0),
-    LAST_MODIFIED_ASCENDING(1),
-    BALANCE_DESCENDING(2),
-    BALANCE_ASCENDING(3),
-    NAME_DESCENDING(4),
-    NAME_ASCENDING(5)
+enum class SortOption(
+    val value: Int,
+    @StringRes val label: Int,
+    val icon: ImageVector
+) {
+    LAST_MODIFIED_DESCENDING(0, R.string.last_modified_text, Icons.Filled.ArrowDownward),
+    LAST_MODIFIED_ASCENDING(1, R.string.last_modified_text, Icons.Filled.ArrowUpward),
+    BALANCE_DESCENDING(2, R.string.balance_text, Icons.Filled.ArrowDownward),
+    BALANCE_ASCENDING(3, R.string.balance_text, Icons.Filled.ArrowUpward),
+    NAME_DESCENDING(4, R.string.person_name_text, Icons.Filled.ArrowDownward),
+    NAME_ASCENDING(5, R.string.person_name_text, Icons.Filled.ArrowUpward)
 }
 
 @HiltViewModel

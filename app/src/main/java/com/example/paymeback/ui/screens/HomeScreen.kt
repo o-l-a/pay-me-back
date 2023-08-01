@@ -1,12 +1,14 @@
 package com.example.paymeback.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,8 +18,6 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
-import androidx.compose.material.icons.outlined.ArrowDownward
-import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.paymeback.PayMeBackTopAppBar
 import com.example.paymeback.R
 import com.example.paymeback.data.Record
@@ -125,88 +126,55 @@ fun HomeBody(
                         .fillMaxSize()
                         .wrapContentSize(Alignment.TopStart)
                 ) {
-                    IconButton(onClick = { expanded = true }) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(
+                                Icons.Default.Sort,
+                                contentDescription = stringResource(R.string.sort_text)
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.clickable(onClick = { expanded = true }),
+                            text = stringResource(SortOption.values()[sortedBy].label).plus(" "),
+                            style = MaterialTheme.typography.labelLarge
+                        )
                         Icon(
-                            Icons.Default.Sort,
-                            contentDescription = stringResource(R.string.sort_text)
+                            modifier = Modifier
+                                .clickable(onClick = { expanded = true })
+                                .size(MaterialTheme.typography.labelLarge.fontSize.value.dp),
+                            imageVector = SortOption.values()[sortedBy].icon,
+                            contentDescription = null
                         )
                     }
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.last_modified_text)) },
-                            onClick = {
-                                onSortClick(SortOption.LAST_MODIFIED_DESCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            })
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.last_modified_text)) },
-                            onClick = {
-                                onSortClick(SortOption.LAST_MODIFIED_ASCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowUpward,
-                                    contentDescription = null
-                                )
-                            })
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.balance_text)) },
-                            onClick = {
-                                onSortClick(SortOption.BALANCE_DESCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            })
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.balance_text)) },
-                            onClick = {
-                                onSortClick(SortOption.BALANCE_ASCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowUpward,
-                                    contentDescription = null
-                                )
-                            })
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.person_name_text)) },
-                            onClick = {
-                                onSortClick(SortOption.NAME_DESCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowDownward,
-                                    contentDescription = null
-                                )
-                            })
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.person_name_text)) },
-                            onClick = {
-                                onSortClick(SortOption.NAME_ASCENDING.value)
-                                expanded = false
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Outlined.ArrowUpward,
-                                    contentDescription = null
-                                )
-                            })
+                        for (sortOption in SortOption.values()) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(sortOption.label),
+                                        style = MaterialTheme.typography.labelLarge
+                                    )
+                                },
+                                onClick = {
+                                    onSortClick(sortOption.value)
+                                    expanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        sortOption.icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(MaterialTheme.typography.labelLarge.fontSize.value.dp)
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -216,7 +184,7 @@ fun HomeBody(
                 SortOption.BALANCE_DESCENDING.value -> recordList.sortedByDescending { it.balance }
                 SortOption.BALANCE_ASCENDING.value -> recordList.sortedBy { it.balance }
                 SortOption.NAME_DESCENDING.value -> recordList.sortedByDescending { it.person.lowercase() }
-                SortOption.BALANCE_ASCENDING.value -> recordList.sortedBy { it.person.lowercase() }
+                SortOption.NAME_ASCENDING.value -> recordList.sortedBy { it.person.lowercase() }
                 else -> recordList
             }) { record ->
                 RecordCard(
@@ -264,7 +232,8 @@ fun RecordCard(
             supportingContent = {
                 Text(
                     text = stringResource(R.string.last_modified_text).plus(": ").plus(
-                        dateFormatter.format(record.modifiedAt)),
+                        dateFormatter.format(record.modifiedAt)
+                    ),
                     style = MaterialTheme.typography.labelMedium
                 )
             },

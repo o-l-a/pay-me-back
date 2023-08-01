@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.TrendingDown
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -109,13 +106,7 @@ fun EditPaymentScreen(
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.shape(position = 0, count = 2),
                     icon = {
-                        SegmentedButtonDefaults.SegmentedButtonIcon(active = paymentUiState.isMyPayment) {
-                            Icon(
-                                imageVector = Icons.Filled.TrendingUp,
-                                contentDescription = null,
-                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                            )
-                        }
+                        SegmentedButtonDefaults.SegmentedButtonIcon(active = paymentUiState.isMyPayment)
                     },
                     onCheckedChange = {
                         viewModel.updateUiState(paymentUiState.copy(isMyPayment = true))
@@ -127,13 +118,7 @@ fun EditPaymentScreen(
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.shape(position = 1, count = 2),
                     icon = {
-                        SegmentedButtonDefaults.SegmentedButtonIcon(active = !paymentUiState.isMyPayment) {
-                            Icon(
-                                imageVector = Icons.Filled.TrendingDown,
-                                contentDescription = null,
-                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                            )
-                        }
+                        SegmentedButtonDefaults.SegmentedButtonIcon(active = !paymentUiState.isMyPayment)
                     },
                     onCheckedChange = {
                         viewModel.updateUiState(paymentUiState.copy(isMyPayment = false))
