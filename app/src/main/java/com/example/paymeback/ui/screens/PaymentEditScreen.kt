@@ -77,8 +77,10 @@ fun EditPaymentScreen(
                     coroutineScope.launch {
                         if (paymentUiState.isFirstTimeEntry) {
                             viewModel.savePayment()
+                            viewModel.updateRecord()
                         } else {
                             viewModel.updatePayment()
+                            viewModel.updateRecord()
                         }
                     }
                     navigateBack()
@@ -240,6 +242,7 @@ fun EditPaymentScreen(
             onConfirm = {
                 coroutineScope.launch {
                     viewModel.deletePayment()
+                    viewModel.updateRecord()
                     navigateBack()
                 }
             }

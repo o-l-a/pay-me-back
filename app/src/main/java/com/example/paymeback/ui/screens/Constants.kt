@@ -7,4 +7,7 @@ import java.text.SimpleDateFormat
 @SuppressLint("SimpleDateFormat")
 val dateFormatter = SimpleDateFormat("dd/MM/yyyy")
 
+@SuppressLint("SimpleDateFormat")
+val timestampFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+
 val decimalFormat = DecimalFormat("0.00")

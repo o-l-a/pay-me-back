@@ -1,18 +1,25 @@
 package com.example.paymeback.ui.screens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Headphones
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -26,7 +33,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -74,6 +85,7 @@ fun HomeScreen(
         HomeBody(
             modifier = modifier.padding(innerPadding),
             recordList = homeUiState.recordList,
+            sortedBy = viewModel.sortedBy.collectAsState(initial = 0).value,
             onCardClick = navigateToRecordEdit,
             onSortClick = { sortBy ->
                 coroutineScope.launch {
@@ -88,6 +100,7 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier = Modifier,
     recordList: List<Record>,
+    sortedBy: Int,
     onCardClick: (Long) -> Unit,
     onSortClick: (Int) -> Unit
 ) {
@@ -101,20 +114,111 @@ fun HomeBody(
     } else {
         val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
         val symbol = numberFormat.currency?.symbol
+        var expanded by remember { mutableStateOf(false) }
         LazyColumn(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = MaterialTheme.spacing.extraLarge)
         ) {
             item {
-                Row {
-                    IconButton(onClick = { onSortClick(0) }) {
-                        Icon(Icons.Filled.Headphones, null)
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(
+                            Icons.Default.Sort,
+                            contentDescription = stringResource(R.string.sort_text)
+                        )
                     }
-                    IconButton(onClick = { onSortClick(1) }) {
-                        Icon(Icons.Filled.Headphones, null)
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.last_modified_text)) },
+                            onClick = {
+                                onSortClick(SortOption.LAST_MODIFIED_DESCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowDownward,
+                                    contentDescription = null
+                                )
+                            })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.last_modified_text)) },
+                            onClick = {
+                                onSortClick(SortOption.LAST_MODIFIED_ASCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowUpward,
+                                    contentDescription = null
+                                )
+                            })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.balance_text)) },
+                            onClick = {
+                                onSortClick(SortOption.BALANCE_DESCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowDownward,
+                                    contentDescription = null
+                                )
+                            })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.balance_text)) },
+                            onClick = {
+                                onSortClick(SortOption.BALANCE_ASCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowUpward,
+                                    contentDescription = null
+                                )
+                            })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.person_name_text)) },
+                            onClick = {
+                                onSortClick(SortOption.NAME_DESCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowDownward,
+                                    contentDescription = null
+                                )
+                            })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.person_name_text)) },
+                            onClick = {
+                                onSortClick(SortOption.NAME_ASCENDING.value)
+                                expanded = false
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Outlined.ArrowUpward,
+                                    contentDescription = null
+                                )
+                            })
                     }
                 }
             }
-            items(recordList) { record ->
+            items(when (sortedBy) {
+                SortOption.LAST_MODIFIED_DESCENDING.value -> recordList.sortedByDescending { it.modifiedAt }
+                SortOption.LAST_MODIFIED_ASCENDING.value -> recordList.sortedBy { it.modifiedAt }
+                SortOption.BALANCE_DESCENDING.value -> recordList.sortedByDescending { it.balance }
+                SortOption.BALANCE_ASCENDING.value -> recordList.sortedBy { it.balance }
+                SortOption.NAME_DESCENDING.value -> recordList.sortedByDescending { it.person.lowercase() }
+                SortOption.BALANCE_ASCENDING.value -> recordList.sortedBy { it.person.lowercase() }
+                else -> recordList
+            }) { record ->
                 RecordCard(
                     record = record,
                     currencySymbol = symbol,
@@ -146,11 +250,6 @@ fun RecordCard(
             )
     ) {
         ListItem(
-            modifier = Modifier
-                .padding(
-                    top = MaterialTheme.spacing.small,
-                    bottom = MaterialTheme.spacing.small
-                ),
             trailingContent = {
                 Text(
                     text = decimalFormat.format(record.balance).plus(" ").plus(currencySymbol),
@@ -160,6 +259,13 @@ fun RecordCard(
             headlineContent = {
                 Text(
                     text = record.person
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = stringResource(R.string.last_modified_text).plus(": ").plus(
+                        dateFormatter.format(record.modifiedAt)),
+                    style = MaterialTheme.typography.labelMedium
                 )
             },
             leadingContent = {

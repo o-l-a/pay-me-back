@@ -33,6 +33,8 @@ class HomeViewModel @Inject constructor(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
+    val sortedBy = userPreferencesRepository.recordsSortedBy
+
     val homeUiState: StateFlow<HomeUiState> =
         recordsRepository.getAllRecordsStream().map { HomeUiState(it) }
             .stateIn(

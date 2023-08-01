@@ -1,5 +1,6 @@
 package com.example.paymeback.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -79,6 +80,13 @@ class PaymentEditViewModel @Inject constructor(
 
     suspend fun deletePayment() {
         paymentsRepository.deletePayment(paymentUiState.toPayment())
+    }
+
+    suspend fun updateRecord() {
+        val record = recordsRepository.getRecordStream(recordId).first()
+        if (record != null) {
+            recordsRepository.updateRecord(record.copy(modifiedAt = Date(System.currentTimeMillis())))
+        }
     }
 }
 

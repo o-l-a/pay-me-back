@@ -8,7 +8,7 @@
     <string name="no_payments_yet">It looks like you haven\'t added any payments yet.</string>
     <string name="dismiss_text">Cancel</string>
     <string name="confirm_text">Save</string>
-    <string name="person_name_text">Name of the person</string>
+    <string name="person_name_text">Name</string>
     <string name="delete_text">Delete</string>
     <string name="delete_message">Are you sure you want to delete this item? This action cannot be undone.</string>
     <string name="add_new_payment">Add new payment</string>
@@ -24,4 +24,7 @@
     <string name="who_paid_text">Who paid?</string>
     <string name="i_paid_text">I paid</string>
     <string name="they_paid_text">They paid</string>
+    <string name="sort_text">Change sorting</string>
+    <string name="balance_text">Balance</string>
+    <string name="last_modified_text">Last modified</string>
 </resources>
