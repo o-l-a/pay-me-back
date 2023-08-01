@@ -218,7 +218,8 @@ fun PaymentCard(
                 },
                 supportingContent = {
                     Text(
-                        text = dateFormatter.format(payment.date)
+                        text = dateFormatter.format(payment.date),
+                        style = MaterialTheme.typography.labelMedium
                     )
                 },
                 trailingContent = {
