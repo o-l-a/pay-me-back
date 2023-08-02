@@ -22,10 +22,10 @@ PayMeBack is an Android app built in Kotlin that helps you track your expenses w
 
 ## Screenshots
 
-| Home Screen                               | Record                                     | Payment                                           |
-|-------------------------------------------|--------------------------------------------|---------------------------------------------------|
-| ![Home Screen](screenshots/home.jpg)      | ![Add Record](screenshots/edit_record.jpg) | ![Record Details](screenshots/edit_payment.jpg)   |                                   |
-| ![Home Screen](screenshots/home_sort.jpg) | ![Add Record](screenshots/add_person.jpg)  | ![Record Details](screenshots/delete_payment.jpg) |
+| Home Screen                                       | Record                                             | Payment                                           |
+|---------------------------------------------------|----------------------------------------------------|---------------------------------------------------|
+| ![Home Screen](screenshots/home.jpg)              | ![Add Record](screenshots/edit_record.jpg)         | ![Record Details](screenshots/edit_payment.jpg)   |                                   |
+| ![Home Screen](screenshots/home_sort.jpg)         | ![Add Record](screenshots/add_person.jpg)          | ![Record Details](screenshots/delete_payment.jpg) |
 ## Usage
 
 1. Launch the PayMeBack app on your Android device or emulator.

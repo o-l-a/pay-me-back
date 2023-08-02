@@ -28,11 +28,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,11 +67,13 @@ fun RecordEditScreen(
     onNavigateUp: () -> Unit,
     viewModel: RecordEditViewModel
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val recordUiState = viewModel.recordUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val numberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
     val symbol = numberFormat.currency?.symbol
     Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             PayMeBackTopAppBar(
                 title = recordUiState.value.person,
@@ -78,7 +82,8 @@ fun RecordEditScreen(
                 hasDeleteAction = true,
                 onDelete = { viewModel.updateUiState(recordUiState.value.copy(deleteDialogVisible = true)) },
                 hasEditAction = true,
-                onEdit = { viewModel.updateUiState(recordUiState.value.copy(actionEnabled = true)) }
+                onEdit = { viewModel.updateUiState(recordUiState.value.copy(actionEnabled = true)) },
+                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
