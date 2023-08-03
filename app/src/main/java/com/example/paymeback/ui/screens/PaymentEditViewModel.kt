@@ -1,6 +1,5 @@
 package com.example.paymeback.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -97,6 +96,7 @@ data class PaymentUiState(
     val date: Date = Date(),
     val title: String = "",
     val amount: String = "",
+    val paymentGroup: String = "",
     val person: String = "",
     val deleteDialogVisible: Boolean = false,
     val datePickerDialogVisible: Boolean = false,
@@ -117,6 +117,7 @@ fun Payment.toPaymentUiState(
     date = date,
     title = title,
     amount = amount.toString(),
+    paymentGroup = paymentGroup,
     person = person,
     deleteDialogVisible = deleteDialogVisible,
     datePickerDialogVisible = datePickerDialogVisible,
@@ -130,7 +131,8 @@ fun PaymentUiState.toPayment(): Payment = Payment(
     isMyPayment = isMyPayment,
     date = date,
     title = title,
-    amount = amount.toFloatOrNull() ?: 0.0F
+    amount = amount.toFloatOrNull() ?: 0.0F,
+    paymentGroup = paymentGroup
 )
 
 fun PaymentUiState.isValid(): Boolean {

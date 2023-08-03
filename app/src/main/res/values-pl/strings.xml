@@ -28,4 +28,15 @@
     <string name="sort_text">Sortuj</string>
     <string name="balance_text">Dług</string>
     <string name="last_modified_text">Ostatnio zmodyfikowane</string>
+    <string name="alcohol_group">Alkohol</string>
+    <string name="food_group">Jedzenie i napoje</string>
+    <string name="clothes_group">Ubrania</string>
+    <string name="sport_group">Sport</string>
+    <string name="housing_group">Gospodarstwo domowe</string>
+    <string name="fun_group">Rozrywka</string>
+    <string name="fuel_group">Paliwo</string>
+    <string name="loan_group">Pożyczki</string>
+    <string name="travel_group">Podróże</string>
+    <string name="emergency_group">Nagłe wypadki</string>
+    <string name="services_group">Usługi</string>
 </resources>

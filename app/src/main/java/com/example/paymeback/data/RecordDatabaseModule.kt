@@ -34,6 +34,14 @@ class RecordDatabaseModule {
             }
         }
 
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    ALTER TABLE Payment ADD COLUMN payment_group TEXT NOT NULL DEFAULT ''
+                """.trimIndent())
+            }
+        }
+
         private val DB_CALLBACK = object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
@@ -94,6 +102,7 @@ class RecordDatabaseModule {
             RecordDatabase::class.java,
             "PayMeBackDatabase"
         ).addMigrations(MIGRATION_9_10)
+            .addMigrations(MIGRATION_11_12)
             .fallbackToDestructiveMigration()
             .addCallback(DB_CALLBACK)
             .build()

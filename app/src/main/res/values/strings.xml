@@ -27,4 +27,15 @@
     <string name="sort_text">Change sorting</string>
     <string name="balance_text">Balance</string>
     <string name="last_modified_text">Last modified</string>
+    <string name="alcohol_group">Alcohol</string>
+    <string name="food_group"><![CDATA[Food & Drinks]]></string>
+    <string name="clothes_group">Clothes</string>
+    <string name="sport_group">Sport</string>
+    <string name="housing_group">Housing</string>
+    <string name="fun_group">Fun</string>
+    <string name="fuel_group">Fuel</string>
+    <string name="loan_group">Loans</string>
+    <string name="travel_group">Travel</string>
+    <string name="emergency_group">Emergency</string>
+    <string name="services_group">Services</string>
 </resources>
